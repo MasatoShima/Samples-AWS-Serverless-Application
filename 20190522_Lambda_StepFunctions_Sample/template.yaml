@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample
+
+# More info about Globals:
+# https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+# More info about Env Vars:
+# https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+Globals:
+    Function:
+        Runtime: python3.6
+        MemorySize: 3008
+        Timeout: 900
+        Environment:
+            Variables:
+                TZ: Asia/Tokyo
+        Layers:
+            - !Sub arn:aws:lambda:ap-northeast-1:${AccountId}:layer:common_layer:1
+
+Resources:
+
+    # **************************************************
+    # ----- Lambda Functions
+    # **************************************************
+    FunctionGet:
+        # More info about Function Resource:
+        # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: Lambda_StepFunctions_Sample_Get.lambda_handler
+            CodeUri: 001_Lambda_StepFunctions_Sample_Get/
+            FunctionName: Lambda_StepFunctions_Sample_Get
+            Description: For Sample (Get file from S3 and return its contents as return value)
+            Role: !Sub arn:aws:iam::${AccountId}:role/AWSLambda-ExecutionRole-20181128T120400
+
+    FunctionCal:
+        # More info about Function Resource:
+        # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: Lambda_StepFunctions_Sample_Cal.lambda_handler
+            CodeUri: 002_Lambda_StepFunctions_Sample_Cal/
+            FunctionName: Lambda_StepFunctions_Sample_Cal
+            Description: For Sample (Refers to the event object and squares the numerical data stored in the specified position)
+            Role: !Sub arn:aws:iam::${AccountId}:role/AWSLambda-ExecutionRole-20181128T120400
+
+    # **************************************************
+    # ----- S3
+    # **************************************************
+    Bucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: lambda-stepfunctions-sample
+
+    # **************************************************
+    # ----- Step Functions
+    # **************************************************
+    StateMachine:
+        Type: "AWS::StepFunctions::StateMachine"
+        Properties:
+            DefinitionString:
+                |
+                {
+                    "StartAt": "Get",
+                    "States": {
+                        "Get": {
+                            "Type": "Task",
+                            "Resource": !Sub "arn:aws:lambda:ap-northeast-1:${AccountId}:function:Lambda_StepFunctions_Sample_Get",
+                            "Next": "Cal",
+                            "InputPath": "$"
+                        },
+                        "Cal": {
+                            "Type": "Task",
+                            "Resource": !Sub "arn:aws:lambda:ap-northeast-1:${AccountId}:function:Lambda_StepFunctions_Sample_Cal",
+                            "InputPath": "$",
+                            "End": true
+                        }
+                    }
+                }
+            RoleArn: !Sub arn:aws:iam::${AccountId}:role/xxxxxxxx
+
+# End
