@@ -9,7 +9,7 @@ Description: Sample
 Globals:
     Function:
         Runtime: python3.6
-        MemorySize: 3008
+        MemorySize: 128
         Timeout: 900
         Environment:
             Variables:
@@ -65,13 +65,13 @@ Resources:
                     "States": {
                         "Get": {
                             "Type": "Task",
-                            "Resource": !Sub "arn:aws:lambda:ap-northeast-1:${AccountId}:function:Lambda_StepFunctions_Sample_Get",
+                            "Resource": !GetAtt FunctionGet.Arn,
                             "Next": "Cal",
                             "InputPath": "$"
                         },
                         "Cal": {
                             "Type": "Task",
-                            "Resource": !Sub "arn:aws:lambda:ap-northeast-1:${AccountId}:function:Lambda_StepFunctions_Sample_Cal",
+                            "Resource": !GetAtt FunctionCal.Arn,
                             "InputPath": "$",
                             "End": true
                         }
