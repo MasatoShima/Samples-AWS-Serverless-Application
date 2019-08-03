@@ -15,7 +15,7 @@ Globals:
             Variables:
                 TZ: Asia/Tokyo
         Layers:
-            - !Sub arn:aws:lambda:ap-northeast-1:${AccountId}:layer:common_layer:1
+            - !Reh Layer
 
 Resources:
 
@@ -27,22 +27,96 @@ Resources:
         # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Type: AWS::Serverless::Function
         Properties:
+            FunctionName: Lambda_StepFunctions_Sample_Get
             Handler: Lambda_StepFunctions_Sample_Get.lambda_handler
             CodeUri: 001_Lambda_StepFunctions_Sample_Get/
-            FunctionName: Lambda_StepFunctions_Sample_Get
             Description: For Sample (Get file from S3 and return its contents as return value)
-            Role: !Sub arn:aws:iam::${AccountId}:role/AWSLambda-ExecutionRole-20181128T120400
+            Role: !GetAtt RoleForLambda.Arn
 
     FunctionCal:
         # More info about Function Resource:
         # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Type: AWS::Serverless::Function
         Properties:
+            FunctionName: Lambda_StepFunctions_Sample_Cal
             Handler: Lambda_StepFunctions_Sample_Cal.lambda_handler
             CodeUri: 002_Lambda_StepFunctions_Sample_Cal/
-            FunctionName: Lambda_StepFunctions_Sample_Cal
             Description: For Sample (Refers to the event object and squares the numerical data stored in the specified position)
-            Role: !Sub arn:aws:iam::${AccountId}:role/AWSLambda-ExecutionRole-20181128T120400
+            Role: !GetAtt RoleForLambda.Arn
+
+    # **************************************************
+    # ----- Lambda Layer
+    # **************************************************
+    Layer:
+        Type: AWS::Lambda::LayerVersion
+        Properties:
+            LayerName: LambdaLayer_Lambda_StepFunctions_Sample
+            CompatibleRuntimes:
+                - python3.6
+                - python3.7
+            Content:
+                S3Bucket: xxxxxxxx
+                S3Key: xxxxxxxx
+            Description: Lambda Layer for "Samples-AWS-Serverless-Application"
+
+    # **************************************************
+    # ----- IAM
+    # **************************************************
+    RoleForLambda:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName: RoleForLambda-Lambda-StepFunctions-Sample
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    -   Action:
+                            - "sts:AssumeRole"
+                        Effect: "Allow"
+                        Principal:
+                            Service:
+                                - "lambda.amazonaws.com"
+    RoleForStepFunctions:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName: RoleForStepFunctions-Lambda-StepFunctions-Sample
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    -   Action:
+                            - "sts:AssumeRole"
+                        Effect: "Allow"
+                        Principal:
+                            Service:
+                                - "events.amazonaws.com"
+
+    PolicyForLambda:
+        Type: AWS::IAM::Policy
+        Properties:
+            PolicyName: PolicyForLambda-Lambda-StepFunctions-Sample
+            PolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - "Action":
+                        - "s3:GetObject"
+                        - "s3:PutObject"
+                      "Effect": "Allow"
+                      "Resource": "*"
+            Roles:
+                - !Ref RoleForLambda
+
+    PolicyForStepFunctions:
+        Type: AWS::IAM::Policy
+        Properties:
+            PolicyName: PolicyForStepFunctions-Lambda-StepFunctions-Sample
+            PolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - "Action":
+                        - "states:StartExecution"
+                      "Effect": "Allow"
+                      "Resource": "*"
+            Roles:
+                - !Ref RoleForStepFunctions
 
     # **************************************************
     # ----- S3
@@ -58,25 +132,12 @@ Resources:
     StateMachine:
         Type: "AWS::StepFunctions::StateMachine"
         Properties:
+            StateMachineName: Lambda_StepFunctions_Sample_StateMachine
             DefinitionString:
-                |
-                {
-                    "StartAt": "Get",
-                    "States": {
-                        "Get": {
-                            "Type": "Task",
-                            "Resource": !GetAtt FunctionGet.Arn,
-                            "Next": "Cal",
-                            "InputPath": "$"
-                        },
-                        "Cal": {
-                            "Type": "Task",
-                            "Resource": !GetAtt FunctionCal.Arn,
-                            "InputPath": "$",
-                            "End": true
-                        }
-                    }
-                }
-            RoleArn: !Sub arn:aws:iam::${AccountId}:role/xxxxxxxx
+                Fn::Tranform:
+                    Name: AWS::Incloude
+                    Parameters:
+                        Location: statemachime.json
+            RoleArn: !GetAtt RoleForStepFunctions.Arn
 
 # End
