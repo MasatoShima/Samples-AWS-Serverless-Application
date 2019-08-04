@@ -3,13 +3,13 @@
     "States": {
         "Get": {
             "Type": "Task",
-            "Resource": {"Fn::GetAtt": ["FunctionGet", "Arn"]},
+            "Resource": "${FunctionGet.Arn}",
             "Next": "Cal",
             "InputPath": "$"
         },
         "Cal": {
             "Type": "Task",
-            "Resource": {"Fn::GetAtt": ["FunctionCal", "Arn"]},
+            "Resource": "${FunctionCal.Arn}",
             "InputPath": "$",
             "End": true
         }
