@@ -134,7 +134,7 @@ Resources:
     # ----- Step Functions
     # **************************************************
     StateMachine:
-        Type: "AWS::StepFunctions::StateMachine"
+        Type: AWS::StepFunctions::StateMachine
         Properties:
             StateMachineName: Lambda_StepFunctions_Sample_StateMachine
             Fn::Transform:
