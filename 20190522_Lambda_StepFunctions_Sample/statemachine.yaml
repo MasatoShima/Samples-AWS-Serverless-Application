@@ -1,0 +1,19 @@
+DefinitionString:
+    Fn::Sub: |-
+        {
+            "StartAt": "Get",
+            "States": {
+                "Get": {
+                    "Type": "Task",
+                    "Resource": "${FunctionGet.Arn}",
+                    "Next": "Cal",
+                    "InputPath": "$"
+                },
+                "Cal": {
+                    "Type": "Task",
+                    "Resource": "${FunctionCal.Arn}",
+                    "InputPath": "$",
+                    "End": true
+                }
+            }
+        }
