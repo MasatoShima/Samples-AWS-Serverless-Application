@@ -53,7 +53,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
 
 	except Exception as error_info:
 		logger.error(
-			f"[Failed... "
+			f"Failed... "
 			f"\n{error_info}"
 			f"\n{traceback.format_exc()}"
 		)
