@@ -1,5 +1,5 @@
 # Name: Masato Shima
-# Created by: 2019/08/04
+# Created on: 2019/08/04
 
 # Upload statemachine.yaml
 aws s3 cp statemachine.yaml s3://mybucket-deploy/statemachine.yaml
