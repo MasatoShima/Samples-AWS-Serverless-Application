@@ -29,7 +29,7 @@ Resources:
         Properties:
             FunctionName: Lambda_StepFunctions_Sample_Get
             Handler: Lambda_StepFunctions_Sample_Get.lambda_handler
-            CodeUri: 001_Get/
+            CodeUri: 20190522_Functions_chaining/001_Get/
             Description: |
                 For Sample
                 (Get file from S3 and return its contents as return value)
@@ -42,7 +42,7 @@ Resources:
         Properties:
             FunctionName: Lambda_StepFunctions_Sample_Cal
             Handler: Lambda_StepFunctions_Sample_Cal.lambda_handler
-            CodeUri: 002_Cal/
+            CodeUri: 20190522_Functions_chaining/002_Cal/
             Description: |
                 For Sample
                 (Refers to the event object and squares the numerical data stored in the specified position)
@@ -170,7 +170,7 @@ Resources:
                 Name: AWS::Include
                 Parameters:
                     Location:
-                        Fn::Sub: s3://mybucket-deploy/statemachine.yaml
+                        Fn::Sub: s3://mybucket-deploy/statemachine_chaining.yaml
             RoleArn: !GetAtt RoleForStepFunctions.Arn
 
 # End

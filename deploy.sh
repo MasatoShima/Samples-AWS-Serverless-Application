@@ -2,7 +2,10 @@
 # Created on: 2019/08/04
 
 # Upload statemachine.yaml
-aws s3 cp statemachine.yaml s3://mybucket-deploy/statemachine.yaml --profile private
+aws s3 cp \
+  ./20190522_Functions_chaining/statemachine.yaml \
+  s3://mybucket-deploy/statemachine_chaining.yaml \
+  --profile private
 
 # package
 sam package \
