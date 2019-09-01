@@ -79,10 +79,25 @@ Resources:
                         Principal:
                             Service:
                                 - "lambda.amazonaws.com"
+
     RoleForStepFunctions:
         Type: AWS::IAM::Role
         Properties:
             RoleName: RoleForStepFunctions-Lambda-StepFunctions-Sample
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    -   Action:
+                            - "sts:AssumeRole"
+                        Effect: "Allow"
+                        Principal:
+                            Service:
+                                - "states.amazonaws.com"
+
+    RoleForCloudWatchevent:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName: RoleForCloudWatchEvent-Lambda-StepFunctions-Sample
             AssumeRolePolicyDocument:
                 Version: 2012-10-17
                 Statement:
@@ -116,11 +131,25 @@ Resources:
                 Version: 2012-10-17
                 Statement:
                     - "Action":
-                        - "states:StartExecution"
+                        - "lambda:InvokeFunction"
                       "Effect": "Allow"
                       "Resource": "*"
             Roles:
                 - !Ref RoleForStepFunctions
+
+    PolicyForCloudWatchevent:
+        Type: AWS::IAM::Policy
+        Properties:
+            PolicyName: PolicyForCloudWatchEvent-Lambda-StepFunctions-Sample
+            PolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - "Action":
+                        - "states:StartExecution"
+                      "Effect": "Allow"
+                      "Resource": "*"
+            Roles:
+                - !Ref RoleForCloudWatchevent
 
     # **************************************************
     # ----- S3
