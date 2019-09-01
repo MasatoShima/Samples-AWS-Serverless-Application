@@ -1,5 +1,5 @@
 """
-Activity Name: Lambda_StepFunctions_Sample_Cal
+Name: Lambda_StepFunctions_Sample_Cal
 Description: イベントオブジェクトを参照し、所定の位置に格納されている数値データを2乗する
 Created by: Masato Shima
 Created on: 2019/05/22

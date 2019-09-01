@@ -1,5 +1,5 @@
 """
-Activity Name: Lambda_StepFunctions_Sample_Get
+Name: Lambda_StepFunctions_Sample_Get
 Description: S3からファイルを取得し、その内容を戻り値として返す
 Created by: Masato Shima
 Created on: 2019/05/22
