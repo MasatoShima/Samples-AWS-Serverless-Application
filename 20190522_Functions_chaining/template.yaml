@@ -29,7 +29,7 @@ Resources:
         Properties:
             FunctionName: Lambda_StepFunctions_Sample_Get
             Handler: Lambda_StepFunctions_Sample_Get.lambda_handler
-            CodeUri: 001_Lambda_StepFunctions_Sample_Get/
+            CodeUri: 001_Get/
             Description: |
                 For Sample
                 (Get file from S3 and return its contents as return value)
@@ -42,7 +42,7 @@ Resources:
         Properties:
             FunctionName: Lambda_StepFunctions_Sample_Cal
             Handler: Lambda_StepFunctions_Sample_Cal.lambda_handler
-            CodeUri: 002_Lambda_StepFunctions_Sample_Cal/
+            CodeUri: 002_Cal/
             Description: |
                 For Sample
                 (Refers to the event object and squares the numerical data stored in the specified position)
