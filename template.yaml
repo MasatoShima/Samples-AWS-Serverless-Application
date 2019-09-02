@@ -62,6 +62,30 @@ Resources:
             Role: !GetAtt RoleForLambda.Arn
 
     # **************************************************
+    # ----- CloudWatch Event
+    # **************************************************
+    # About AWS resource events rule
+    # https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-events-rule.html
+    # https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_PutTargets.html
+    RuleFunctionChaining:
+        Type: AWS::Events::Rule
+        Properties:
+            Name: Lambda_StepFunctions_Sample_Functions_chaining
+            Description: From S3 object put event, To execute StepFunctions StateMachine
+            EventPattern:
+                Fn::Transform:
+                    Name: AWS::Include
+                    Parameters:
+                        Location:
+                            Fn::Sub: s3://mybucket-deploy/eventpattern_fun_in_out.json
+            RoleArn: !GetAtt RoleForCloudWatchevent.Arn
+            State: ENABLED
+            Targets:
+                - Id: FunctionChaining
+                  Arn: !Ref StateMachine
+                  RoleArn: !GetAtt RoleForCloudWatchevent.Arn
+
+    # **************************************************
     # ----- Lambda Layer
     # **************************************************
     Layer:
