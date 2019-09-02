@@ -7,6 +7,12 @@ aws s3 cp \
   s3://mybucket-deploy/statemachine_chaining.yaml \
   --profile private
 
+# Upload eventpattern.json
+aws s3 cp \
+  ./20190901_Functions_fun_in_out/eventpattern.json \
+  s3://mybucket-deploy/eventpattern_fun_in_out.json \
+  --profile private
+
 # package
 sam package \
  --template-file template.yaml \
