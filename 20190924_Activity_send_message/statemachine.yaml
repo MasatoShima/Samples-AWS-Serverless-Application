@@ -11,27 +11,9 @@ DefinitionString:
                 },
                 "SendMessage": {
                     "Type": "Task",
-                    "Resource": {
-                        "Fn::Sub": [
-                            "${QueueArn}",
-                            {
-                                "QueueArn": {
-                                    "Fn::GetAtt":  ["Queue", "Arn"]
-                                }
-                            }
-                        ]
-                    },
+                    "Resource": "${QueueArn}",
                     "Parameters": {
-                        "QueueUrl": {
-                            "Fn::Sub": [
-                                "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${Queue.QueueName}",
-                                {
-                                    "QueueName": {
-                                        "Fn::GetAtt":  ["Queue", "QueueName"]
-                                    }
-                                }
-                            ]
-                        },
+                        "QueueUrl": "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${QueueName}"
                         "MessageBody.$": "$"
                     },
                     "End": true
