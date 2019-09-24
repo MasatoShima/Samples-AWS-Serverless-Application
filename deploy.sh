@@ -7,10 +7,20 @@ aws s3 cp \
   s3://mybucket-deploy/statemachine_chaining.yaml \
   --profile private
 
+aws s3 cp \
+  ./20190924_Activity_send_message/statemachine.yaml \
+  s3://mybucket-deploy/statemachine_send_message.yaml \
+  --profile private
+
 # Upload eventpattern.json
 aws s3 cp \
-  ./20190901_Functions_fun_in_out/eventpattern.json \
-  s3://mybucket-deploy/eventpattern_fun_in_out.json \
+  ./20190522_Functions_chaining/eventpattern.json \
+  s3://mybucket-deploy/eventpattern_chaining.json \
+  --profile private
+
+aws s3 cp \
+  ./20190924_Activity_send_message/eventpattern.json \
+  s3://mybucket-deploy/eventpattern_send_message.json \
   --profile private
 
 # package
