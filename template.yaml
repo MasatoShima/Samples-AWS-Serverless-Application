@@ -70,19 +70,37 @@ Resources:
     RuleFunctionChaining:
         Type: AWS::Events::Rule
         Properties:
-            Name: Lambda_StepFunctions_Sample_Functions_chaining
+            Name: StepFunctions_Sample_Functions_chaining
             Description: From S3 object put event, To execute StepFunctions StateMachine
             EventPattern:
                 Fn::Transform:
                     Name: AWS::Include
                     Parameters:
                         Location:
-                            Fn::Sub: s3://mybucket-deploy/eventpattern_fun_in_out.json
+                            Fn::Sub: s3://mybucket-deploy/eventpattern_chaining.json
             RoleArn: !GetAtt RoleForCloudWatchevent.Arn
             State: ENABLED
             Targets:
                 - Id: FunctionChaining
-                  Arn: !Ref StateMachine
+                  Arn: !Ref StateMachineFunctionChaining
+                  RoleArn: !GetAtt RoleForCloudWatchevent.Arn
+
+    RuleSendMessgae:
+        Type: AWS::Events::Rule
+        Properties:
+            Name: StepFunctions_Sample_Activity_Send_Message
+            Description: From S3 object put event, To execute StepFunctions StateMachine
+            EventPattern:
+                Fn::Transform:
+                    Name: AWS::Include
+                    Parameters:
+                        Location:
+                            Fn::Sub: s3://mybucket-deploy/eventpattern_send_message.json
+            RoleArn: !GetAtt RoleForCloudWatchevent.Arn
+            State: ENABLED
+            Targets:
+                - Id: ActivitySendMessgae
+                  Arn: !Ref StateMachineActivitySendMessage
                   RoleArn: !GetAtt RoleForCloudWatchevent.Arn
 
     # **************************************************
@@ -169,6 +187,7 @@ Resources:
                 Statement:
                     - "Action":
                         - "lambda:InvokeFunction"
+                        - "sqs:*"
                       "Effect": "Allow"
                       "Resource": "*"
             Roles:
@@ -197,17 +216,36 @@ Resources:
             BucketName: !Sub lambda-stepfunctions-sample-${AWS::AccountId}
 
     # **************************************************
+    # ----- SQS Queues
+    # **************************************************
+    Queue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: !Sub lambda-stepfunctions-sample-${AWS::AccountId}
+
+    # **************************************************
     # ----- Step Functions
     # **************************************************
-    StateMachine:
+    StateMachineFunctionChaining:
         Type: AWS::StepFunctions::StateMachine
         Properties:
-            StateMachineName: Lambda_StepFunctions_Sample_StateMachine
+            StateMachineName: Sample_StateMachine_Function_Chaining
             Fn::Transform:
                 Name: AWS::Include
                 Parameters:
                     Location:
                         Fn::Sub: s3://mybucket-deploy/statemachine_chaining.yaml
+            RoleArn: !GetAtt RoleForStepFunctions.Arn
+
+    StateMachineActivitySendMessage:
+        Type: AWS::StepFunctions::StateMachine
+        Properties:
+            StateMachineName: Sample_StateMachine_Activity_Send_Message
+            Fn::Transform:
+                Name: AWS::Include
+                Parameters:
+                    Location:
+                        Fn::Sub: s3://mybucket-deploy/statemachine_send_message.yaml
             RoleArn: !GetAtt RoleForStepFunctions.Arn
 
 # End
