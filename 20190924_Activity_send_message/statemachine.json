@@ -1,0 +1,29 @@
+{
+    "StartAt": "GetFile",
+    "States": {
+        "GetFile": {
+            "Type": "Task",
+            "Resource": "${FunctionGet.Arn}",
+            "Next": "SendMessage",
+            "InputPath": "$"
+        },
+        "SendMessage": {
+            "Type": "Task",
+            "Resource": {"Fn::GetAtt":  ["Queue", "Arn"]},
+            "Parameters": {
+                "QueueUrl": {
+                    "Fn::Sub": [
+                        "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${Queue.QueueName}",
+                        {
+                            "QueueName": {
+                                "Fn::GetAtt":  ["Queue", "QueueName"]
+                            }
+                        }
+                    ]
+                },
+                "MessageBody.$": "$"
+            },
+            "End": true
+        }
+    }
+}
