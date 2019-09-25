@@ -187,7 +187,22 @@ Resources:
                 Statement:
                     - "Action":
                         - "lambda:InvokeFunction"
-                        - "sqs:*"
+                        - "sqs:ChangeMessageVisibility"
+                        - "sqs:ChangeMessageVisibilityBatch"
+                        - "sqs:DeleteMessage"
+                        - "sqs:DeleteMessageBatch"
+                        - "sqs:GetQueueAttributes"
+                        - "sqs:GetQueueUrl"
+                        - "sqs:ListDeadLetterSourceQueues"
+                        - "sqs:ListQueueTags"
+                        - "sqs:ListQueues"
+                        - "sqs:PurgeQueue"
+                        - "sqs:ReceiveMessage"
+                        - "sqs:SendMessage"
+                        - "sqs:SendMessageBatch"
+                        - "sqs:SetQueueAttributes"
+                        - "sqs:TagQueue"
+                        - "sqs:UntagQueue"
                       "Effect": "Allow"
                       "Resource": "*"
             Roles:
@@ -243,7 +258,7 @@ Resources:
             StateMachineName: Sample_StateMachine_Activity_Send_Message
             DefinitionString:
                 !Sub
-                    - |-                        
+                    - |-
                         {
                             "StartAt": "GetFile",
                             "States": {

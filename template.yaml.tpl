@@ -187,7 +187,22 @@ Resources:
                 Statement:
                     - "Action":
                         - "lambda:InvokeFunction"
-                        - "sqs:*"
+                        - "sqs:ChangeMessageVisibility"
+                        - "sqs:ChangeMessageVisibilityBatch"
+                        - "sqs:DeleteMessage"
+                        - "sqs:DeleteMessageBatch"
+                        - "sqs:GetQueueAttributes"
+                        - "sqs:GetQueueUrl"
+                        - "sqs:ListDeadLetterSourceQueues"
+                        - "sqs:ListQueueTags"
+                        - "sqs:ListQueues"
+                        - "sqs:PurgeQueue"
+                        - "sqs:ReceiveMessage"
+                        - "sqs:SendMessage"
+                        - "sqs:SendMessageBatch"
+                        - "sqs:SetQueueAttributes"
+                        - "sqs:TagQueue"
+                        - "sqs:UntagQueue"
                       "Effect": "Allow"
                       "Resource": "*"
             Roles:
@@ -244,9 +259,9 @@ Resources:
             DefinitionString:
                 !Sub
                     - |-
-{%- filter indent(24, True) %}
-{% include "20190924_Activity_send_message/statemachine.json" %}
-{%- endfilter %}
+                        {% filter indent(24, False) %}
+                        {%- include "20190924_Activity_send_message/statemachine.json" -%}
+                        {%- endfilter %}
                     -
                         {
                             QueueArn: !GetAtt Queue.Arn,
