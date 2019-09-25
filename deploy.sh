@@ -7,11 +7,6 @@ aws s3 cp \
   s3://mybucket-deploy/statemachine_chaining.yaml \
   --profile private
 
-aws s3 cp \
-  ./20190924_Activity_send_message/statemachine.yaml \
-  s3://mybucket-deploy/statemachine_send_message.yaml \
-  --profile private
-
 # Upload eventpattern.json
 aws s3 cp \
   ./20190522_Functions_chaining/eventpattern.json \
@@ -22,6 +17,9 @@ aws s3 cp \
   ./20190924_Activity_send_message/eventpattern.json \
   s3://mybucket-deploy/eventpattern_send_message.json \
   --profile private
+
+# render template.yaml
+python ./Tools/render_template.py -t ./template.yaml.tpl
 
 # package
 sam package \
