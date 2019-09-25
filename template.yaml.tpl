@@ -187,22 +187,7 @@ Resources:
                 Statement:
                     - "Action":
                         - "lambda:InvokeFunction"
-                        - "sqs:ChangeMessageVisibility"
-                        - "sqs:ChangeMessageVisibilityBatch"
-                        - "sqs:DeleteMessage"
-                        - "sqs:DeleteMessageBatch"
-                        - "sqs:GetQueueAttributes"
-                        - "sqs:GetQueueUrl"
-                        - "sqs:ListDeadLetterSourceQueues"
-                        - "sqs:ListQueueTags"
-                        - "sqs:ListQueues"
-                        - "sqs:PurgeQueue"
-                        - "sqs:ReceiveMessage"
-                        - "sqs:SendMessage"
-                        - "sqs:SendMessageBatch"
-                        - "sqs:SetQueueAttributes"
-                        - "sqs:TagQueue"
-                        - "sqs:UntagQueue"
+                        - "sqs:*"
                       "Effect": "Allow"
                       "Resource": "*"
             Roles:
@@ -257,16 +242,10 @@ Resources:
         Properties:
             StateMachineName: Sample_StateMachine_Activity_Send_Message
             DefinitionString:
-                !Sub
-                    - |-
-                        {% filter indent(24, False) %}
-                        {%- include "20190924_Activity_send_message/statemachine.json" -%}
-                        {%- endfilter %}
-                    -
-                        {
-                            QueueArn: !GetAtt Queue.Arn,
-                            QueueName: !GetAtt Queue.QueueName
-                        }
+                Fn::Sub: |-
+                    {% filter indent(20, False) %}
+                    {%- include "20190924_Activity_send_message/statemachine.json" -%}
+                    {%- endfilter %}
             RoleArn: !GetAtt RoleForStepFunctions.Arn
 
 # End

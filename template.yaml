@@ -187,22 +187,7 @@ Resources:
                 Statement:
                     - "Action":
                         - "lambda:InvokeFunction"
-                        - "sqs:ChangeMessageVisibility"
-                        - "sqs:ChangeMessageVisibilityBatch"
-                        - "sqs:DeleteMessage"
-                        - "sqs:DeleteMessageBatch"
-                        - "sqs:GetQueueAttributes"
-                        - "sqs:GetQueueUrl"
-                        - "sqs:ListDeadLetterSourceQueues"
-                        - "sqs:ListQueueTags"
-                        - "sqs:ListQueues"
-                        - "sqs:PurgeQueue"
-                        - "sqs:ReceiveMessage"
-                        - "sqs:SendMessage"
-                        - "sqs:SendMessageBatch"
-                        - "sqs:SetQueueAttributes"
-                        - "sqs:TagQueue"
-                        - "sqs:UntagQueue"
+                        - "sqs:*"
                       "Effect": "Allow"
                       "Resource": "*"
             Roles:
@@ -257,33 +242,27 @@ Resources:
         Properties:
             StateMachineName: Sample_StateMachine_Activity_Send_Message
             DefinitionString:
-                !Sub
-                    - |-
-                        {
-                            "StartAt": "GetFile",
-                            "States": {
-                                "GetFile": {
-                                    "Type": "Task",
-                                    "Resource": "${FunctionGet.Arn}",
-                                    "Next": "SendMessage",
-                                    "InputPath": "$"
+                Fn::Sub: |-
+                    {
+                        "StartAt": "GetFile",
+                        "States": {
+                            "GetFile": {
+                                "Type": "Task",
+                                "Resource": "${FunctionGet.Arn}",
+                                "Next": "SendMessage",
+                                "InputPath": "$"
+                            },
+                            "SendMessage": {
+                                "Type": "Task",
+                                "Resource": "${Queue.Arn}",
+                                "Parameters": {
+                                    "QueueUrl": "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${Queue.QueueName}",
+                                    "MessageBody.$": "$"
                                 },
-                                "SendMessage": {
-                                    "Type": "Task",
-                                    "Resource": "${QueueArn}",
-                                    "Parameters": {
-                                        "QueueUrl": "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${QueueName}",
-                                        "MessageBody.$": "$"
-                                    },
-                                    "End": true
-                                }
+                                "End": true
                             }
                         }
-                    -
-                        {
-                            QueueArn: !GetAtt Queue.Arn,
-                            QueueName: !GetAtt Queue.QueueName
-                        }
+                    }
             RoleArn: !GetAtt RoleForStepFunctions.Arn
 
 # End

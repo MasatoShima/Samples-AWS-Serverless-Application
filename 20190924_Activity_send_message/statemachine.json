@@ -9,9 +9,9 @@
         },
         "SendMessage": {
             "Type": "Task",
-            "Resource": "${QueueArn}",
+            "Resource": "${Queue.Arn}",
             "Parameters": {
-                "QueueUrl": "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${QueueName}",
+                "QueueUrl": "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${Queue.QueueName}",
                 "MessageBody.$": "$"
             },
             "End": true
