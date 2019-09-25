@@ -241,11 +241,34 @@ Resources:
         Type: AWS::StepFunctions::StateMachine
         Properties:
             StateMachineName: Sample_StateMachine_Activity_Send_Message
-            Fn::Transform:
-                Name: AWS::Include
-                Parameters:
-                    Location:
-                        Fn::Sub: s3://mybucket-deploy/statemachine_send_message.yaml
+            DefinitionString:
+                !Sub
+                    - |-                        
+                        {
+                            "StartAt": "GetFile",
+                            "States": {
+                                "GetFile": {
+                                    "Type": "Task",
+                                    "Resource": "${FunctionGet.Arn}",
+                                    "Next": "SendMessage",
+                                    "InputPath": "$"
+                                },
+                                "SendMessage": {
+                                    "Type": "Task",
+                                    "Resource": "${QueueArn}",
+                                    "Parameters": {
+                                        "QueueUrl": "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${QueueName}",
+                                        "MessageBody.$": "$"
+                                    },
+                                    "End": true
+                                }
+                            }
+                        }
+                    -
+                        {
+                            QueueArn: !GetAtt Queue.Arn,
+                            QueueName: !GetAtt Queue.QueueName
+                        }
             RoleArn: !GetAtt RoleForStepFunctions.Arn
 
 # End
