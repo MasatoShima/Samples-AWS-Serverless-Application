@@ -9,7 +9,7 @@
         },
         "SendMessage": {
             "Type": "Task",
-            "Resource": "${Queue.Arn}",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
             "Parameters": {
                 "QueueUrl": "https://sqs.ap-northeast-1.amazonaws.com/${AWS::AccountId}/${Queue.QueueName}",
                 "MessageBody.$": "$"
