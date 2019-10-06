@@ -9,7 +9,9 @@ Created on: 2019/10/03
 # ----- Import Library
 # **************************************************
 import os
+import sys
 import argparse
+import traceback
 import json
 import boto3
 from typing import *
@@ -107,7 +109,23 @@ def _get_object(event: Dict[str, Any]) -> str:
 if __name__ == '__main__':
 	os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-	main(args.event)
+	try:
+		logger.info("Start main process")
+
+		main(args.event)
+
+		status = 0
+
+		logger.info("End main process")
+
+	except Exception as error_info:
+		logger.error("Failed main process")
+		logger.error(error_info)
+		logger.error(traceback.format_exc())
+
+		status = 1
+
+	sys.exit(status)
 
 
 # **************************************************
