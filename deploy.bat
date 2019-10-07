@@ -1,12 +1,6 @@
 @rem Name: Masato Shima
 @rem Created on: 2019/09/02
 
-@rem Upload statemachine.yaml
-aws s3 cp ^
-  ./20190522_Functions_chaining/statemachine.yaml ^
-  s3://mybucket-deploy/statemachine_chaining.yaml ^
-  --profile private
-
 @rem Upload eventpattern.json
 aws s3 cp ^
   ./20190522_Functions_chaining/eventpattern.json ^
@@ -16,6 +10,11 @@ aws s3 cp ^
 aws s3 cp ^
   ./20190924_Activity_send_message/eventpattern.json ^
   s3://mybucket-deploy/eventpattern_send_message.json ^
+  --profile private
+
+aws s3 cp ^
+  ./20191003_Activity_execute_task/eventpattern.json ^
+  s3://mybucket-deploy/eventpattern_execute_task.json ^
   --profile private
 
 @rem render template.yaml
