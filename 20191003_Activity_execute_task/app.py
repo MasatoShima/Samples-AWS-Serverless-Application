@@ -42,11 +42,11 @@ parser = argparse.ArgumentParser(
 
 # パラメータ作成
 parser.add_argument(
-	"-e",
-	"--event",
+	"-a",
+	"--arn",
 	action="store",
 	required=False,
-	help="event object from S3"
+	help="ARN of object put to S3"
 )
 
 args = parser.parse_args()
@@ -75,8 +75,8 @@ s3 = boto3.client("s3")
 # **************************************************
 # ----- Main
 # **************************************************
-def main(event):
-	data = _get_object(event)
+def main(arn: str):
+	data = _get_object(arn)
 
 	return {
 		"status": "SUCCESS",
@@ -87,8 +87,7 @@ def main(event):
 # **************************************************
 # ----- Function get_object
 # **************************************************
-def _get_object(event: Dict[str, Any]) -> str:
-	arn = event["detail"]["resources"][0]["ARN"]
+def _get_object(arn: s3) -> Dict[Any, Any]:
 	bucket = arn.split(":::")[1].split("/")[0]
 	key = arn.split(":::")[1].split("/")[1]
 
@@ -112,7 +111,7 @@ if __name__ == '__main__':
 	try:
 		logger.info("Start main process")
 
-		main(args.event)
+		main(args.arn)
 
 		status = 0
 
