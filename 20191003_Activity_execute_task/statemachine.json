@@ -1,0 +1,33 @@
+{
+    "StartAt": "ExecuteTask",
+    "States": {
+        "ExecuteTask": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::ecs:runTask.sync",
+            "Parameters": {
+                "Cluster": "sample",
+                "LaunchType": "FARGATE",
+                "Overrides": {
+                    "ContainerOverrides": [
+                        {
+                            "Command": ["run.sh"],
+                            "Name": "sample",
+                            "ResourceRequirements": []
+                        }
+                    ]
+                },
+                "TaskDefinition": "sample:2",
+                "NetworkConfiguration": {
+                    "AwsvpcConfiguration": {
+                        "Subnets": [
+                            "${SubnetPriA}",
+                            "${SubnetPriC}"
+                        ],
+                        "AssignPublicIp": "DISABLED"
+                    }
+                }
+            },
+            "End": true
+        }
+    }
+}
