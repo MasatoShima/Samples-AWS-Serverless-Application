@@ -382,6 +382,7 @@ Resources:
     # **************************************************
     # ----- VPC
     # **************************************************
+    # VPC and Subnet
     Vpc:
         Type: AWS::EC2::VPC
         Properties:
@@ -415,6 +416,107 @@ Resources:
             CidrBlock: 10.0.4.0/24
             VpcId: !Ref Vpc
 
+    # Internet Gateway
+    InternetGateway:
+        Type: AWS::EC2::InternetGateway
+
+    InternetGatewayAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            InternetGatewayId: !Ref InternetGateway
+            VpcId: !Ref Vpc
+
+    # Elastic IP
+    ElasticIPAzA:
+        Type: AWS::EC2::EIP
+        Properties:
+            Domain: vpc
+
+    ElasticIPAzC:
+        Type: AWS::EC2::EIP
+        Properties:
+            Domain: vpc
+
+    # NAT Gateway
+    NATGatewayAzA:
+        Type: AWS::EC2::NatGateway
+        Properties:
+            AllocationId: !GetAtt ElasticIPAzA.AllocationId
+            SubnetId: !Ref SubnetPubA
+
+    NATGatewayAzC:
+        Type: AWS::EC2::NatGateway
+        Properties:
+            AllocationId: !GetAtt ElasticIPAzC.AllocationId
+            SubnetId: !Ref SubnetPubC
+
+    # Route table for public subnet
+    # Public subnet A / C => Internet Gateway
+    RouteTablePublic:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref Vpc
+
+    RouteDefaultPublic:
+        Type: AWS::EC2::Route
+        Properties:
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref InternetGateway
+            RouteTableId: !Ref RouteTablePublic
+
+    RouteDefaultPublicAssociationAzA:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref RouteTablePublic
+            SubnetId: !Ref SubnetPubA
+
+    RouteDefaultPublicAssociationAzC:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref RouteTablePublic
+            SubnetId: !Ref SubnetPubC
+
+    # Route table for private subnet A
+    # Private subnet A => NAT Gateway in Public subnet A
+    RouteTablePrivateAzA:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref Vpc
+
+    RouteDefaultPrivateAzA:
+        Type: AWS::EC2::Route
+        Properties:
+            DestinationCidrBlock: 0.0.0.0/0
+            NatGatewayId: !Ref NATGatewayAzA
+            RouteTableId: !Ref RouteTablePrivateAzA
+
+    RouteDefaultPrivateAssociationAzA:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref RouteTablePrivateAzA
+            SubnetId: !Ref SubnetPriA
+
+    # Route table for private subnet C
+    # Private subnet C => NAT Gateway in Public subnet C
+    RouteTablePrivateAzC:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref Vpc
+
+    RouteDefaultPrivateAzC:
+        Type: AWS::EC2::Route
+        Properties:
+            DestinationCidrBlock: 0.0.0.0/0
+            NatGatewayId: !Ref NATGatewayAzC
+            RouteTableId: !Ref RouteTablePrivateAzC
+
+    RouteDefaultPrivateAssociationAzC:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref RouteTablePrivateAzC
+            SubnetId: !Ref SubnetPriC
+
+    # Security Group
     SecurityGroup:
         Type: AWS::EC2::SecurityGroup
         Properties:
