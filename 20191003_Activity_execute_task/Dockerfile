@@ -15,6 +15,6 @@ COPY run.sh ./
 RUN pip install boto3
 
 # 以下のコマンドは AWS ECS 側で上書きされることを期待する
-CMD ["run.sh", "$1"]
+CMD ["/usr/src/app/run.sh", "$1"]
 
 # End
