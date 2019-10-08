@@ -356,7 +356,7 @@ Resources:
                                     "Overrides": {
                                         "ContainerOverrides": [
                                             {
-                                                "Command": ["run.sh"],
+                                                "Command.$": "$.detail.resources[?(@.type=='AWS::S3::Object')].ARN",
                                                 "Name": "sample",
                                                 "ResourceRequirements": []
                                             }
