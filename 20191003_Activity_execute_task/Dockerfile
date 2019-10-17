@@ -14,8 +14,8 @@ COPY app.py ./
 COPY run.sh ./
 
 # 実行権限を付与
-RUN sudo chmod 775 ./app.py
-RUN sudo chmod 775 ./run.sh
+RUN chmod 775 ./app.py
+RUN chmod 775 ./run.sh
 
 # 必要なライブラリをインストール
 RUN pip install boto3
