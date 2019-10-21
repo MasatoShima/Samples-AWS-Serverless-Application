@@ -12,7 +12,6 @@ import os
 import argparse
 import jinja2
 from jinja2 import Environment, FileSystemLoader
-from typing import *
 
 
 # **************************************************
@@ -55,7 +54,7 @@ args = parser.parse_args()
 # **************************************************
 # ----- Main
 # **************************************************
-def main():
+def main() -> None:
 	template = load_template()
 
 	template_rendered = render_template(template)
